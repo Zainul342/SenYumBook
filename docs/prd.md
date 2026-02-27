@@ -1,210 +1,142 @@
+---
+classification: PRD
+version: '1.1'
+status: draft
+inputDocuments: ['product-brief.md', 'senyumbook-portofolio-summary.md']
+---
+
 # Product Requirements Document (PRD): SenYumBook
 
-**Version:** 1.0
-**Date:** 2026-02-27
-**Author:** zen
-**Status:** Draft
+## 1. Executive Summary
+
+SenYumBook adalah SaaS *reservation-first* dengan pengingat otomatis via WhatsApp untuk klinik gigi berskala kecil di Indonesia. Produk ini menyelesaikan masalah operasional manual (membalas WA, double-booking, no-show pasien) dengan menyediakan sistem booking instan tanpa aplikasi dan pengingat jadwal yang terjadwal. Diferensiator utamanya adalah kesederhanaan (*setup* di bawah 5 menit) dan pendekatan non-AI yang menjamin keandalan *cost-effective*.
+
+## 2. Success Criteria
+
+- **SC-01:** Akuisisi 100 klinik gigi aktif berbayar dalam 90 hari pertama pasca-peluncuran, diukur melalui dashboard analytics platform.
+- **SC-02:** Tingkat konversi dari pengguna *trial* ke pengguna berbayar (> 25%), diukur per siklus penagihan 30 hari.
+- **SC-03:** Penurunan tingkat *no-show* pasien pada klinik pengguna aktif minimal 50%, diukur melalui rasio *booked* vs *attended* harian.
+- **SC-04:** Pendapatan berulang (MRR) mencapai Rp 20 juta hingga Rp 30 juta per bulan pada bulan keenam pasca-peluncuran.
+
+## 3. User Journeys
+
+### 3.1 Pasien Melakukan Booking (First-Time User)
+Pasien menerima link booking klinik dari bio Instagram atau WhatsApp klinik. Pasien membuka link di browser HP, memilih layanan, memilih jadwal yang tersedia dari kalender real-time, dan memasukkan nama serta nomor WhatsApp. Setelah menekan submit, pasien langsung menerima pesan konfirmasi booking di WhatsApp mereka.
+
+### 3.2 Pasien Menerima Reminder (Engagement)
+Sistem berjalan di latar belakang. Pada H-1 jadwal dan 1 jam sebelum jadwal, sistem mendeteksi booking aktif dan mengirimkan pesan template pengingat yang ramah via WhatsApp ke pasien. Pasien dapat membalas pesan tersebut untuk konfirmasi atau permintaan *reschedule*.
+
+### 3.3 Admin Klinik Mengelola Jadwal Harian (Daily Ops)
+Mbak Rina (Admin) membuka dashboard web dari browser HP atau tablet di meja kasir. Ia melihat tampilan kalender hari ini dengan slot-slot yang sudah terisi otomatis oleh booking online. Saat ada pasien *walk-in*, Rina menambahkan booking secara manual ke dalam kalender untuk mencegah pasien online memesan slot tersebut.
+
+### 3.4 Owner Klinik Memeriksa Performa (Analytics)
+dr. Salma (Owner) masuk ke dashboard web dari laptopnya seminggu sekali. Ia melihat laporan ringkas jumlah pasien minggu ini dan rasio ketidakhadiran (*no-show*). Di akhir bulan, ia memeriksa status langganan dan melakukan pembayaran otomatis bulanan.
+
+## 4. Product Scope
+
+### Phase 1: MVP (Peluncuran Awal - 6-8 Minggu)
+Fokus pada *core loop* reservasi dan pengingat.
+- **Included:** FR-01, FR-02, FR-03, FR-04, FR-05, FR-06, FR-07, FR-10, FR-11, FR-12, FR-20, FR-21, FR-22, FR-30, FR-31, FR-32.
+
+### Phase 2: Growth (Optimasi Monetisasi - 8-12 Minggu)
+Fokus pada pembayaran, kolaborasi admin, dan analitik dasar.
+- **Included:** FR-13, FR-23, FR-24, FR-33, FR-40, FR-41, FR-42.
+
+### Phase 3: Scale (Fitur Lanjutan - >12 Minggu)
+Fokus pada kustomisasi, *waitlist automation*, dan fitur *multi-branch*.
+- **Included:** FR-14, *Waitlist magic*, *Template promo*, *Multi-cabang support*.
+
+## 5. Functional Requirements
+
+### 5.1 Booking System (Core)
+| ID | Requirement (Capability) | Priority | Phase |
+| :--- | :--- | :--- | :--- |
+| FR-01 | Pasien dapat memesan jadwal via tautan publik tanpa instalasi aplikasi tambahan. | P0 | MVP |
+| FR-02 | Sistem menampilkan ketersediaan slot waktu secara *real-time* per dokter. | P0 | MVP |
+| FR-03 | Sistem mengirimkan pesan konfirmasi reservasi otomatis ke WhatsApp pasien sesaat setelah pemesanan berhasil. | P0 | MVP |
+| FR-04 | Pengguna internal (admin/dokter) dapat membuat, mengubah, dan membatalkan pesanan jadwal dari dashboard. | P0 | MVP |
+| FR-05 | Sistem mengunci slot waktu (*slot lock*) saat sebuah jadwal dipilih untuk menghindari *double booking*. | P0 | MVP |
+| FR-06 | Sistem menyediakan URL booking khusus untuk setiap klinik yang dapat diakses publik. | P1 | MVP |
+| FR-07 | Pengguna internal dapat memasukkan data pesanan manual (*walk-in*) ke dalam jadwal. | P1 | MVP |
+
+### 5.2 WhatsApp Reminder (Core)
+| ID | Requirement (Capability) | Priority | Phase |
+| :--- | :--- | :--- | :--- |
+| FR-10 | Sistem mencari dan mengirimkan notifikasi pengingat via WhatsApp tepat 24 jam sebelum jadwal pasien. | P0 | MVP |
+| FR-11 | Sistem mencari dan mengirimkan notifikasi pengingat via WhatsApp tepat 1 jam sebelum jadwal pasien. | P0 | MVP |
+| FR-12 | Sistem menyisipkan format pesan pengingat berbahasa Indonesia formal-ramah secara *default*. | P0 | MVP |
+| FR-13 | Sistem dapat menerima balasan WhatsApp pasien dan memicu pembaruan status konfirmasi pada dashboard. | P1 | Growth |
+| FR-14 | Pengguna internal dapat mengubah templat pesan pengingat sesuai kebutuhan klinik. | P2 | Scale |
+
+### 5.3 Dashboard & Management
+| ID | Requirement (Capability) | Priority | Phase |
+| :--- | :--- | :--- | :--- |
+| FR-20 | Antarmuka dashboard dapat menyesuaikan tampilan (*responsive*) seluruhnya pada perangkat *mobile* dan desktop. | P0 | MVP |
+| FR-21 | Sistem menampilkan tata letak jadwal harian dan mingguan menggunakan indikator warna pembeda. | P0 | MVP |
+| FR-22 | Sistem merekam riwayat pesanan, secara otomatis menyimpan nama dan kontak WhatsApp pasien ke dalam daftar terpusat. | P0 | MVP |
+| FR-23 | Sistem mendukung akses minimal 2 *role* (pemilik, admin) dengan batasan maksimal 5 pengguna per klinik. | P1 | Growth |
+| FR-24 | Sistem mengkalkulasi dan menampilkan total jumlah reservasi serta persentase *no-show* secara bulanan. | P2 | Growth |
+
+### 5.4 Onboarding & Setup
+| ID | Requirement (Capability) | Priority | Phase |
+| :--- | :--- | :--- | :--- |
+| FR-30 | Calon pengguna mendaftarkan akun menggunakan alamat surel (email) atau nomor WhatsApp. | P0 | MVP |
+| FR-31 | Pengguna baru mengikuti *wizard* pengaturan terstruktur untuk profil klinik, jam operasional, dan dokter. | P0 | MVP |
+| FR-32 | Sistem mengaktifkan dan dapat menerima akses halaman tautan publik klinik seketika pengaturan selesai. | P0 | MVP |
+| FR-33 | Sistem memberikan akses fitur penuh selama 14 hari percobaan awal secara otomatis. | P0 | Growth |
+
+### 5.5 Payment & Subscription
+| ID | Requirement (Capability) | Priority | Phase |
+| :--- | :--- | :--- | :--- |
+| FR-40 | Sistem mendukung siklus penagihan pembayaran berulang dengan integrasi penyedia pembayaran lokal Indonesia (menangani VA, e-wallet, dan QRIS). | P1 | Growth |
+| FR-41 | Pengguna dapat mengganti tipe paket berlangganan (*upgrade/downgrade*) langsung dalam platform. | P1 | Growth |
+| FR-42 | Sistem menerbitkan bukti transaksi dan memberitahu pengguna via surel sesudah pembayaran sukses. | P2 | Growth |
+
+## 6. Non-Functional Requirements (NFR)
+
+| ID | Requirement Condition & Measurement |
+| :--- | :--- |
+| NFR-01 | Waktu muat halaman dashboard (*page load time*) tidak boleh lebih dari 2 detik untuk persentil ke-95, diukur menggunakan Vercel Analytics selama periode 30 hari. |
+| NFR-02 | Ketersediaan sistem (*uptime*) mencapai 99.5% selama jam operasional wajar (06:00-22:00 WIB), diukur melalui monitor *uptime* eksternal bulanan. |
+| NFR-03 | Antarmuka beroperasi secara penuh (100% *layout and functional compliance*) di iOS Safari dan Android Chrome terbaru, diuji melalui automasi UI. |
+| NFR-04 | Tingkat keberhasilan pengiriman pesan WhatsApp pengingat melampaui 95% dari total perintah kirim bulanan, dievaluasi melalui tanggapan sukses API webhook pelaporan eksternal. |
+| NFR-05 | Arsitektur mendukung akses simultan dari setidaknya 5 perangkat per akun tanpa penurunan performa yang melampaui metrik NFR-01, diukur via *load test* sistem. |
+
+## 7. Domain Requirements (Healthcare & Privacy)
+
+Sistem ini memproses Data Pribadi (nama dan nomor telepon pasien) dan informasi pesanan medis, mengharuskan kepatuhan dasar perlindungan privasi.
+
+| ID | Requirement (Compliance) |
+| :--- | :--- |
+| DR-01 | Informasi PII (Personally Identifiable Information) pasien (Nama, No WhatsApp) harus dienkripsi dalam penyimpanan (*at rest*, minimum standar AES-256). |
+| DR-02 | Semua transmisi lalu lintas data antara *client* (publik/admin) dan *server* menggunakan *secure protocol* (in transit, TLS 1.2+). |
+| DR-03 | Pengguna platform harus diwajibkan melewati otentikasi sesi terbatas waktu (*time-limited token*) untuk memuat data pasien. |
+| DR-04 | Sesuai kelayakan UU Perlindungan Data Pribadi (UU PDP), pasien melalui administrasi berhak meminta penghapusan total histori datanya (*right to be forgotten*), dan sistem harus sepenuhnya menghapusnya secara lunak dan keras. |
+| DR-05 | Sistem menyimpan replika data cadangan (*database backup*) sedikitnya satu kali per 24 jam dengan durasi penyimpanan historis minimal 30 hari. |
+
+## 8. Technology Stack Representation
+Spesifikasi infrastruktur dan pilihan kerangka kerja (*framework*), secara khusus menggunakan pendekatan fungsional sistem konvensional otomatis (non-AI), didokumentasikan sepenuhnya di halaman eksternal:
+👉 **[Tech Stack Decision Document](./tech-stack.md)**
+
+## 9. Landing Page Capabilities
+Kebutuhan fungsional representasi pemasaran depan publikasi produk.
+1. Halaman web memuat area sorotan ganda ("Hero") yang mengarahkan ke formulir konversi "Mulai Trial Gratis 14 Hari".
+2. Menampilkan kredensial *social proof* fiktif / awal untuk memvalidasi kepercayaan portofolio awal.
+3. Halaman menggambarkan resolusi persoalan *scheduling* pasien WhatsApp kacau menjadi antarmuka dashboard seragam.
+4. Menu fungsional menjabarkan daftar kelebihan (fitur kunci + cuplikan UI/screenshot layar).
+5. Tabular matriks penetapan harga tiga (*tiga-tier pricing model*).
+6. Segmen FAQ lipat (komponen *accordion*).
+7. Palet warna didasarkan pada visual Biru (Kepercayaan) dan Hijau (Solusi Medis Tenang/Calming) — mewakili kesan klinis modern.
+
+## 10. Out of Scope (Exclusions)
+Batasan sistem tegas dideklarasikan; elemen berikut absolut tidak dirancang dan tidak diizinkan masuk ke tahapan R&D (sesuai filosofi operasional non-AI yang dipandu pengembang):
+
+- ❌ Pembuatan/Penyimpanan Rekam Medis Elektronik (RME).
+- ❌ Komponen diagram rekam periksa digital seperti Odontogram interaktif.
+- ❌ Pertukaran basis data birokrasi asuransi silang (Misal: Integrasi langsung BPJS atau Kemenkes SatuSehat).
+- ❌ Manajemen pengelolaan suplai logistik klinik obat/alat (*inventory tracking*).
+- ❌ Robot percakapan dinamis penjawab (AI Chatbot) atau agen penjadwalan NLP analitis.
+- ❌ Aplikasi kompilasi OS mandiri Android/iOS (*Native Apps*) — pendekatan eksklusif pada web responsive (PWA).
 
 ---
-
-## 1. Overview
-
-SenYumBook adalah SaaS reservasi online + reminder WhatsApp otomatis untuk klinik gigi kecil di Indonesia. Produk ini difokuskan sebagai solusi **"Reservation-First"** — bukan full clinic management system.
-
-**Referensi:** [Product Brief](./product-brief.md) | [Market Research](../senyumbook-portofolio-summary.md)
-
----
-
-## 2. Goals & Objectives
-
-### Business Goals
-- Akuisisi 100 klinik gigi dalam 3 bulan pertama.
-- Conversion rate trial → paid > 25%.
-- Revenue recurring Rp 20-30 juta/bulan di bulan ke-6.
-
-### Product Goals
-- Setup klinik baru selesai dalam < 5 menit.
-- Pengurangan no-show 50-70% bagi klinik pengguna.
-- Dashboard bisa diakses dan dioperasikan fully dari mobile.
-
----
-
-## 3. User Personas
-
-### Persona 1: dr. Salma (Pemilik Klinik)
-- **Usia:** 32 tahun, dokter gigi praktek mandiri di Malang
-- **Goal:** Menambah pasien baru tanpa tambah staf
-- **Pain:** Capek balas WA booking manual, pasien sering no-show
-- **Tech:** iPhone, IG aktif, WA Business, Google Maps listing
-
-### Persona 2: Mbak Rina (Admin Klinik)
-- **Usia:** 24 tahun, staf admin fresh graduate
-- **Goal:** Mengelola jadwal tanpa pusing
-- **Pain:** Jadwal double-booking, data pasien di buku tulis hilang
-- **Tech:** Android, familiar WA, jarang pakai laptop
-
----
-
-## 4. Functional Requirements
-
-### 4.1 Booking System (Core)
-
-| ID | Requirement | Priority |
-| :--- | :--- | :--- |
-| FR-01 | Pasien bisa booking via link publik tanpa login/download app | P0 |
-| FR-02 | Kalender real-time menampilkan slot tersedia per dokter | P0 |
-| FR-03 | Konfirmasi booking otomatis via WhatsApp ke pasien | P0 |
-| FR-04 | Admin bisa create/edit/cancel booking dari dashboard | P0 |
-| FR-05 | Pencegahan double booking (slot lock mechanism) | P0 |
-| FR-06 | Custom booking link per klinik (misal: book.senyumbook.id/salma-medica) | P1 |
-| FR-07 | Walk-in booking bisa ditambahkan manual oleh admin | P1 |
-
-### 4.2 WhatsApp Reminder (Core)
-
-| ID | Requirement | Priority |
-| :--- | :--- | :--- |
-| FR-10 | Reminder otomatis H-1 (24 jam sebelum) via WA | P0 |
-| FR-11 | Reminder otomatis H-1jam (1 jam sebelum) via WA | P0 |
-| FR-12 | Pesan reminder menggunakan bahasa Indonesia yang natural & ramah | P0 |
-| FR-13 | Pasien bisa konfirmasi/reschedule via reply WA | P1 |
-| FR-14 | Template WA message bisa di-customize per klinik | P2 |
-
-### 4.3 Dashboard & Management
-
-| ID | Requirement | Priority |
-| :--- | :--- | :--- |
-| FR-20 | Dashboard web responsive (mobile-first) | P0 |
-| FR-21 | Tampilan kalender harian/mingguan dengan color-coded slots | P0 |
-| FR-22 | Data pasien tersimpan otomatis (nama, nomor WA, riwayat booking) | P0 |
-| FR-23 | Multi-user access (owner + admin) dengan role sederhana | P1 |
-| FR-24 | Laporan booking sederhana (jumlah booking, no-show rate) | P2 |
-
-### 4.4 Onboarding & Setup
-
-| ID | Requirement | Priority |
-| :--- | :--- | :--- |
-| FR-30 | Signup dengan email atau nomor WA | P0 |
-| FR-31 | Setup wizard: nama klinik → jam operasional → dokter → selesai | P0 |
-| FR-32 | Booking link langsung aktif setelah setup | P0 |
-| FR-33 | Trial gratis 14 hari tanpa kartu kredit | P0 |
-
-### 4.5 Payment & Subscription
-
-| ID | Requirement | Priority |
-| :--- | :--- | :--- |
-| FR-40 | Billing bulanan via Xendit (VA, e-wallet, QRIS) | P1 |
-| FR-41 | Upgrade/downgrade plan dari dashboard | P1 |
-| FR-42 | Invoice otomatis via email | P2 |
-
----
-
-## 5. Non-Functional Requirements
-
-| ID | Requirement | Target |
-| :--- | :--- | :--- |
-| NFR-01 | Page load time (dashboard) | < 2 detik |
-| NFR-02 | Uptime | 99.5% |
-| NFR-03 | Mobile responsiveness | Full support iOS Safari + Android Chrome |
-| NFR-04 | Data security | Enkripsi at rest + in transit, comply UU PDP |
-| NFR-05 | Concurrent users per tenant | Minimum 5 |
-| NFR-06 | WA message delivery rate | > 95% |
-
----
-
-## 6. Tech Stack (Non-AI-Centric)
-
-Berdasarkan riset MCP terhadap ekosistem terkini:
-
-### Frontend
-- **Next.js 15** (React framework, SSR/SSG untuk SEO landing page + SPA dashboard)
-- **TypeScript** (type safety)
-- **Vanilla CSS / CSS Modules** (ringan, tanpa dependency berat seperti Tailwind)
-
-### Backend & Database
-- **Supabase** (PostgreSQL + Auth + Realtime + Storage + Edge Functions)
-  - *Alasan:* Open-source, real-time subscriptions untuk update booking, built-in auth, instant REST API, gratis untuk MVP.
-
-### WhatsApp Integration
-- **Meta Official WhatsApp Business Cloud API** + Node.js SDK
-  - *Alasan:* Compliance resmi Meta, template message system, webhook support untuk reply handling. Tidak pakai unofficial provider supaya aman jangka panjang.
-
-### Payment Gateway
-- **Xendit** (Subscription billing)
-  - *Alasan:* Sudah support recurring payment + e-wallet + QRIS + VA. SDK Node.js tersedia. Cocok untuk SaaS di Indonesia.
-
-### Hosting & Deployment
-- **Vercel** (untuk Next.js, auto-scaling, edge network)
-- **Supabase Cloud** (managed PostgreSQL)
-
-### Monitoring
-- **Vercel Analytics** (performance)
-- **Supabase Dashboard** (database monitoring)
-
-> **Catatan:** Stack ini sengaja **tidak AI-sentris**. Tidak ada LLM, machine learning, atau AI inference. Fokus pada **automation sederhana** (cron job untuk reminder, webhook untuk WA) yang reliable dan murah.
-
----
-
-## 7. User Flow (Simplified)
-
-```
-Pasien klik booking link (dari IG/WA/GMaps)
-  → Pilih tanggal & jam tersedia
-  → Isi nama + nomor WA
-  → Konfirmasi booking
-  → [Sistem] Kirim konfirmasi WA ke pasien
-  → [Sistem] Update kalender real-time
-  → [Sistem] H-1: Kirim reminder WA
-  → [Sistem] H-1jam: Kirim reminder WA
-  → Pasien datang ke klinik ✅
-```
-
----
-
-## 8. Landing Page Requirements
-
-Mengikuti struktur dari `senyumbook-portofolio-summary.md`:
-1. Hero + CTA "Mulai Trial Gratis 14 Hari"
-2. Social Proof (testimoni fiktif untuk portfolio)
-3. Problem Identification (visual WA berantakan)
-4. Product Features (grid card + screenshot)
-5. Pricing (3-tier)
-6. FAQ
-7. Footer + Trust badges
-
-**Design Direction:** Hybrid Dashboard-Centric + Doctor-Centric
-**Color:** Biru muda #4A90E2, Hijau soft #7ED957, Putih #FFFFFF, Abu #F8FAFC
-
----
-
-## 9. Release Plan
-
-### Phase 1: MVP (6-8 minggu)
-- Booking system + calendar
-- WA reminder (konfirmasi + H-1 + H-1jam)
-- Custom booking link
-- Mobile dashboard
-- Landing page
-- Trial signup flow
-
-### Phase 2: Growth (8-12 minggu)
-- Payment integration (Xendit)
-- Analytics sederhana
-- WA reply handling (konfirmasi/reschedule)
-- Multi-user access
-
-### Phase 3: Scale (12+ minggu)
-- Waitlist magic (slot kosong otomatis ditawarkan)
-- Template promo IG builder
-- Multi-cabang support
-- API untuk integrasi pihak ketiga
-
----
-
-## 10. Out of Scope (Sengaja Tidak Dibangun)
-
-- ❌ Rekam Medis Elektronik (RME) — bukan fokus kita
-- ❌ Odontogram digital — terlalu kompleks
-- ❌ Integrasi BPJS/SatuSehat — untuk klinik besar
-- ❌ Inventory management — bukan core value
-- ❌ AI chatbot / AI scheduling — **kita non-AI-sentris**
-- ❌ Mobile native app — web responsive sudah cukup
+*End of PRD*
