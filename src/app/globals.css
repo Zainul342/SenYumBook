@@ -1,58 +1,60 @@
 @import "tailwindcss";
 
 /* ============================================
-   SenYumBook — Pure Zen Design System
-   Inspired by popcorn.space
-   Google Fonts loaded via <link> in layout.tsx
+   SenYumBook — Gumloop-Inspired Design System
+   Modern, clean, bold SaaS aesthetic
+   Fonts loaded via <link> in layout.tsx
    ============================================ */
 
 /* --- CSS Custom Properties (Theme Tokens) --- */
 :root {
-  /* Primary */
-  --primary: #0057FF;
+  /* Primary — Dental Trust Blue */
+  --primary: #4A90E2;
   --primary-foreground: #FFFFFF;
-  --primary-hover: #0047D4;
+  --primary-hover: #3A7BD5;
+  --primary-light: rgba(74, 144, 226, 0.08);
 
-  /* Secondary */
-  --secondary: #22C55E;
+  /* Secondary — Health Green */
+  --secondary: #7ED957;
   --secondary-foreground: #FFFFFF;
-  --secondary-hover: #16A34A;
+  --secondary-hover: #6BC548;
 
-  /* Backgrounds */
-  --background: #FDFCF9;
-  --foreground: #1A1A1A;
+  /* Backgrounds — Gumloop clean white */
+  --background: #FCFCFC;
+  --foreground: #0A0A0A;
 
   /* Surfaces */
   --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
-  --muted: #F5F5F0;
-  --muted-foreground: #737373;
+  --card-foreground: #0A0A0A;
+  --muted: #F4F4F5;
+  --muted-foreground: #71717A;
 
   /* Borders */
-  --border: #E8E8E3;
-  --ring: #0057FF;
+  --border: #E4E4E7;
+  --border-light: #F0F0F2;
+  --ring: #4A90E2;
 
   /* States */
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
 
-  /* Radius */
-  --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 20px;
-  --radius-xl: 24px;
-  --radius-2xl: 32px;
+  /* Radius — Gumloop-style */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  /* Shadows — soft, popcorn.space style */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 16px 50px rgba(0, 0, 0, 0.1);
-  --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.12);
+  /* Shadows — minimal, Gumloop-like */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.10);
+  --shadow-float: 0 24px 64px rgba(0, 0, 0, 0.12);
 
   /* Typography */
-  --font-heading: 'Instrument Serif', serif;
+  --font-heading: 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
 }
 
@@ -77,22 +79,17 @@ body {
   font-size: 16px;
 }
 
-/* --- Heading System (Instrument Serif) --- */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+/* --- Heading System (Inter Bold — Gumloop scale) --- */
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
   color: var(--foreground);
 }
 
 h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2.75rem, 6vw, 4.5rem);
 }
 
 h2 {
@@ -104,7 +101,7 @@ h3 {
 }
 
 h4 {
-  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
 }
 
 /* --- Paragraph --- */
@@ -127,68 +124,63 @@ a {
   color: var(--primary-foreground);
 }
 
-/* --- Utility Classes --- */
-.zen-card {
-  background: var(--card);
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border);
-  padding: 2rem;
-  box-shadow: var(--shadow-md);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+/* --- Navbar --- */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(252, 252, 252, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0.875rem 1.5rem;
+  transition: all 0.3s ease;
 }
 
-.zen-card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-}
-
-.zen-btn-primary {
-  display: inline-flex;
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 2rem;
-  background: var(--foreground);
-  color: var(--background);
-  border: none;
-  border-radius: var(--radius-full);
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
+  justify-content: space-between;
 }
 
-.zen-btn-primary:hover {
-  opacity: 0.85;
-  transform: scale(1.02);
-}
-
-.zen-btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 2rem;
-  background: transparent;
+.nav-logo {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.375rem;
   color: var(--foreground);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-full);
-  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-links {
+  display: none;
+  list-style: none;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+  }
+}
+
+.nav-links a {
+  font-size: 0.9375rem;
   font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
+  color: var(--muted-foreground);
+  transition: color 0.2s ease;
 }
 
-.zen-btn-secondary:hover {
-  border-color: var(--foreground);
-  background: var(--muted);
+.nav-links a:hover {
+  color: var(--foreground);
 }
 
-/* --- Section spacing (popcorn.space-like) --- */
+/* --- Utility: Section --- */
 .zen-section {
   padding: 5rem 1.5rem;
   max-width: 1200px;
@@ -201,13 +193,248 @@ a {
   }
 }
 
-/* --- Smooth fade-in animation --- */
+/* --- Section Badge (Gumloop-style pill) --- */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 1rem;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
+}
+
+/* --- Gradient Text --- */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --- Cards --- */
+.zen-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.zen-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* --- Buttons --- */
+.zen-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.zen-btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.zen-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background: transparent;
+  color: var(--foreground);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.zen-btn-secondary:hover {
+  border-color: var(--foreground);
+  background: var(--muted);
+}
+
+.zen-btn-large {
+  padding: 1rem 2.5rem;
+  font-size: 1.0625rem;
+}
+
+/* --- Pricing Card --- */
+.pricing-card {
+  background: var(--card);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.pricing-card.popular {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  transform: scale(1.03);
+}
+
+.pricing-card.popular::before {
+  content: 'Most Popular';
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: white;
+  padding: 0.25rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* --- Testimonial Card --- */
+.testimonial-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  position: relative;
+}
+
+.testimonial-card::before {
+  content: '"';
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  font-size: 4rem;
+  color: var(--primary-light);
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+/* --- FAQ Accordion --- */
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 0;
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--foreground);
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+
+.faq-answer {
+  color: var(--muted-foreground);
+  font-size: 1rem;
+  line-height: 1.7;
+  padding-top: 0.75rem;
+}
+
+/* --- Trust Bar --- */
+.trust-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1.5rem 0;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+}
+
+.trust-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+/* --- Grid Layouts --- */
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .pricing-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .benefits-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --- Smooth Animations --- */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -218,14 +445,10 @@ a {
   animation: fadeInUp 0.6s ease-out forwards;
 }
 
-/* --- Float animation for mockups --- */
 @keyframes float {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0px);
   }
-
   50% {
     transform: translateY(-12px);
   }
@@ -233,4 +456,116 @@ a {
 
 .animate-float {
   animation: float 5s ease-in-out infinite;
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
+}
+
+/* --- Problem Cards --- */
+.problem-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #FEF2F2;
+  border-radius: var(--radius-md);
+  border: 1px solid #FEE2E2;
+}
+
+.problem-icon {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FCA5A5;
+  border-radius: var(--radius-sm);
+  font-size: 1.25rem;
+}
+
+/* --- Stat Card --- */
+.stat-card {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.stat-number {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+}
+
+/* --- Feature Icon Box --- */
+.feature-icon {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-light);
+  border-radius: var(--radius-md);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* --- Bonus Badge --- */
+.bonus-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+  color: #92400E;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- Footer --- */
+.footer {
+  background: var(--foreground);
+  color: var(--background);
+  padding: 3rem 1.5rem;
+}
+
+.footer a {
+  color: rgba(252, 252, 252, 0.7);
+  transition: color 0.2s ease;
+}
+
+.footer a:hover {
+  color: var(--background);
+}
+
+/* --- Responsive container --- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 2rem;
+  }
 }

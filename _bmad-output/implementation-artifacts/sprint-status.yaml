@@ -38,7 +38,7 @@ story_location: "_bmad-output/implementation-artifacts"
 development_status:
   # ===== SPRINT 1: Landing Page + Foundation (2 weeks) =====
   epic-1: in-progress
-  1-1-project-initialization-and-design-system-setup: in-progress
+  1-1-project-initialization-and-design-system-setup: done
   1-2-hero-section: backlog
   1-3-features-and-benefits-section: backlog
   1-4-pricing-section: backlog
