@@ -188,53 +188,46 @@ The defining experience is the frictionless transition from *Intent* (clicking a
 
 ## 7. Visual Design Foundation
 
-### 7.1 Color System
+### 7.1 Color System (Ultra-Minimalist)
 
-- **Primary (Trust Blue):** `#0057FF` - Represents medical reliability and digital authority.
-- **Secondary (Calming Green):** `#22C55E` - Represents health, success, and reassurance.
-- **Backgrounds:** Off-white (`#FDFCF9`) foregrounds with soft borders to create a "Sanitized but Warm" medical vibe.
-- **Semantic Mappings:** Explicit use of Calming Green for "Confirmed" states and subtle yellows/grays for "Pending" to maintain a low-anxiety environment.
+- **Base (Off-White):** `#FCFCFC` - A deeply calming "almost white" background to reduce eye strain and give a premium canvas feel.
+- **Surface (Card White):** `#FFFFFF` - Clean white cards floating on the Off-White background.
+- **Primary (Trust Blue Micro-Hits):** `#4A90E2` - Used strictly as a 1px border on selected items, floating badges, or subtle radial glows. Not used as large block buttons to prevent clinical fatigue.
+- **Secondary (Health Green Micro-Hits):** `#7ED957` - Exclusive for checkmarks, success states, and the final "Confirmed" badge. 
+- **Foregrounds:** Intersecting dark grays (`text-zinc-900` for headings, `text-zinc-500` for body) rather than pure black.
 
-### 7.2 Typography System
+### 7.2 Typography System (Extreme Contrast)
 
-- **Primary Heading (Serif):** *Instrument Serif* - Used for landing page value propositions and clinic headers to establish trust and authority.
-- **Functional UI (Sans-Serif):** *Inter* - Used for all input fields, labels, and table data to ensure zero reading friction.
-- **Type Scale:** A "Large & Bold" mobile-first scale where H1s are prominent to instantly communicate the page's purpose.
+- **Primary Font:** *Inter* (or Geist Sans) for all UI text.
+- **The "Vercel" Treatment:**
+  - **Headings:** Heavy weight (700/800) with extreme tight tracking (`tracking-tighter`).
+  - **Badges/Eyebrows:** Tiny sizes (11px-12px), fully uppercase, with extreme loose tracking (`tracking-widest`).
+  - **Body:** Standard size, `text-muted-foreground` with standard `leading-relaxed` for perfect scannability.
 
-### 7.3 Spacing & Layout Foundation
+### 7.3 Invisible Borders & Glass Shadows
 
-- **The "8px Soft Grid":** Ensures logical consistency across all dashboard and patient-flow modules.
-- **Airy Density:** High-padding strategy (e.g., `p-6` or `p-8` for mobile cards) to visually "slow down" the user and reduce cognitive load.
-- **Soft Boundaries:** Universal `border-radius: 24px` or higher to eliminate "sharp/clinical" edges, making the software feel modern and friendly.
+- **Borders:** Strict 1px borders using `border-gray-200/50` (or `border-black/[0.04]`). Forms and cards should feel like lines drawn on glass, not heavy containers.
+- **Shadows:** No harsh "box" shadows. Use custom shadows with massive blur radius but single-digit opacity (e.g., `box-shadow: 0 24px 64px rgba(0, 0, 0, 0.04)`).
+- **Rounding:** Generous radii. `rounded-2xl` or `rounded-3xl` for main cards, creating a friendly, "membutat" but highly precise architecture.
 
-### 7.4 Accessibility Considerations
+### 7.4 Animation & Motion (Snappy Options)
 
-- **Color Contrast:** All text content will maintain a minimum 4.5:1 contrast ratio against backgrounds.
-- **Thumb-Zone Optimization:** Critical interactive elements (Next Step, Confirm, WhatsApp Link) placed in the lower 60% of the mobile screen.
-- **Wait-State Transparency:** Using high-quality skeleton loaders instead of generic spinning icons to keep the user informed during data fetches.
+- **Library:** Rely on `framer-motion` (Spring Physics).
+- **Feel:** Fast and bouncy. No 1-second long fade-ins. Hover effects should feel instantaneous but organic, snapping back into place when a mouse leaves a button.
 
 ## 8. Design Direction Decision
 
-### 8.1 Design Directions Explored
+### 8.1 Chosen Direction: Boutique Minimalist (A la Gumloop)
 
-1. **Pure Zen (Minimalist & Calming):** Maximum whitespace, soft pastels, focuses on reducing anxiety.
-2. **Clinical Pro (Authoritative & Sharp):** High contrast, crisp borders, emphasizes medical precision.
-3. **Playful Health (Approachable & Friendly):** Vibrant colors, rounded shapes, targets younger demographics.
+### 8.2 Design Rationale
 
-### 8.2 Chosen Direction
+Standard AI interfaces use 3-column grids, emojis, and solid block buttons, leading to "template fatigue." We want SenYumBook to feel like a boutique product—bespoke, tailored, and extremely light. Utilizing the "Ultra-Minimalist" approach forces the user to focus solely on the product's value (booking & automation) without visual noise.
 
-**Pure Zen (Minimalist & Calming)**
+### 8.3 Implementation Approach
 
-### 8.3 Design Rationale
-
-This direction perfectly aligns with the core goal of "Automated Peace of Mind". By applying the soft, airy aesthetics inspired by popcorn.space, we instantly lower the cognitive load for both stressed clinic admins and anxious patients. The premium, serene feel builds immediate trust without feeling cold or overly clinical.
-
-### 8.4 Implementation Approach
-
-- Heavy use of `rounded-3xl` or `rounded-4xl`.
-- Backgrounds primarily Off-White (`#FDFCF9`).
-- Extensive padding (`p-6` to `p-8`) on cards.
-- Subtle drop shadows for depth without harsh lines.
+- **Light Mode Only:** Focus entirely on a pristine, perfectly spaced Light Mode. No dark mode implementation to ensure the clinical context (cleanliness) dominates.
+- **Micro-Color:** 95% of the UI will be grayscale/white/off-white. The 5% brand colors (Blue/Green) are used mathematically for interactions.
+- **Product-Led Visuals:** No stock photos. We will build CSS/HTML "Mockups" of the UI to serve as floating graphics.
 
 ## 9. User Journey Flows
 
@@ -312,70 +305,53 @@ graph TD
 
 ## 10. Component Strategy
 
-### 10.1 Design System Components (Shadcn/UI)
+### 10.1 Design System Components
 
-We will utilize the following foundation components out-of-the-box, styled with our "Pure Zen" aesthetic (large border-radius, soft shadows, Trust Blue & Calming Green):
-- Button, Input, Form, Label (Patient data entry)
-- Calendar (Date selection)
-- Toast (Success/Error notifications)
-- Dialog/Modal (Confirmation before destructive actions like cancellation)
+We will eliminate out-of-the-box UI framework look by adopting custom styling using `clsx` and `tailwind-merge` primitives. The emphasis is on:
+- Bento Box layouts
+- Translucent elements
+- Snappy interactions (`framer-motion`)
 
-### 10.2 Custom Components
+### 10.2 Bento Grid Architecture
 
-The following components extend the design system to meet our specific UX friction-reduction goals:
+**Purpose:** Eliminate the generic "3 equivalent cards" AI layout.
+**Interaction:** Instead of basic columns, features are presented in an asymmetrical Bento Grid:
+- A massive `md:col-span-2 md:row-span-2` block to showcase the primary feature (WhatsApp Automation) with a large CSS graphic.
+- Smaller `col-span-1` squares acting as data bites or secondary features (e.g., 24/7 Booking).
+- Gaps between bento boxes should be tight (`gap-4` or `gap-6` on large desktop).
 
-#### 1. Service Selection Card
-**Purpose:** Replace standard dropdowns with high-touch-target cards for service selection.
-**States:** Default (White), Selected (Trust Blue border & light blue background).
+### 10.3 The CSS Product-Mockups
 
-#### 2. Time Slot Grid (Pill Buttons)
-**Purpose:** Display available times in an easily scannable, thumb-friendly 2 or 3-column grid.
-**States:** Available (thin green border), Selected (solid Calming Green), Blocked (light gray, strikethrough text).
-
-#### 3. Swipeable Patient Item (Admin Dashboard)
-**Purpose:** Allow admins to process the daily queue rapidly using native mobile gestures.
-**Interaction:** Swipe Right (reveal green "Selesai" action), Swipe Left (reveal red "Batal" action).
-
-#### 4. Celebration Link Card (Owner Onboarding)
-**Purpose:** Deliver the "Target Accomplished" feeling instantly after the 5-minute setup.
-**Anatomy:** Prominent URL display, giant "Copy Link" button, optional confetti micro-interaction.
-
-### 10.3 Component Implementation Strategy
-
-- All custom components will be built utilizing Shadcn/UI primitives and Tailwind CSS utility classes to ensure visual consistency.
-- Maintain the 8px soft grid spacing internally within all custom components.
+**Purpose:** Bypass the "uncanny valley" of AI-generated images or bad stock photos.
+**Implementation:** Build miniature, fake UIs exclusively out of `div`s, `flex`, and Typography inside the Hero and Bento Box sections. For instance, creating a mockup of a fake text message box using `<div className="rounded-xl border bg-white p-3 shadow-sm">...</div>` to represent the WA reminder.
 
 ### 10.4 Implementation Roadmap
 
-- **Phase 1 (Core Booking):** Service Selection Card & Time Slot Grid (Critical for patient flow).
-- **Phase 2 (Admin Ops):** Swipeable Patient Item (Critical for daily operational efficiency).
-- **Phase 3 (Delight):** Celebration Link Card (Enhances the onboarding experience).
+- **Phase 1 (The Landing Refactor):** Bento Grid for features, removal of AI images, implementation of CSS mockups, application of Lucide icons.
+- **Phase 2 (Snappy Interactivity):** `framer-motion` for spring-loaded intro and scroll reveals.
+- **Phase 3 (Micro-copy Polish):** Ensuring uppercase tracking on eyebrows matches the vercel aesthetic.
 
 ## 11. UX Consistency Patterns
 
-### 11.1 Button Hierarchy
+### 11.1 The Emoji Kill (Lucide SVG Integration)
 
-- **Primary Action:** One per screen. Solid Trust Blue (`#0057FF`) with bold typography. Used for the single most important action (e.g., "Konfirmasi").
-- **Secondary Action:** Ghost button or light gray outline. Used for alternative paths (e.g., "Kembali", "Lewati").
-- **Destructive Action:** Solid Warning Red. **MUST** trigger a confirmation modal before execution (e.g., "Batalkan Jadwal").
+- **Rule:** Absolute prohibition on standard OS emojis (🔥, 💸) in the UI. 
+- **Replacement:** Use `lucide-react`. Set a global stroke-width (`strokeWidth={1.5}`) and a uniform size across icons to guarantee a sophisticated line-art appearance.
 
-### 11.2 Feedback Patterns
+### 11.2 Snappy Hover States
 
-- **Success:** Instant inline visual change (checkmark animation) followed immediately by a Calming Green (`#22C55E`) toast notification.
-- **Wait-State:** Prohibited use of infinite spinners. Must use Skeleton Loaders that mimic the final content structure to increase perceived speed.
-- **Error:** Inline validation phrasing errors softly *below* the input field in a muted red, updating in real-time as the user types.
+- Instead of slow color transitions (`duration-300`), the hover states will rely heavily on transform scales (e.g., `hover:scale-[1.02]`) using Spring transition in framer-motion or `transition-transform duration-150 ease-out` in Tailwind.
+- Buttons should feel instantly reactive.
 
-### 11.3 Form & Data Entry Patterns
+### 11.3 Hierarchy via Contrast, Not Heavy Colors
 
-- **Smart Keyboard:** Auto-invoke the numeric keypad for phone number inputs.
-- **Auto-Format:** Phone numbers automatically format with hyphens (e.g., 0812-3456-7890) during input for readability.
-- **Top-Aligned Labels:** Labels strictly placed above input fields (not inside as placeholders) to ensure context is never lost while typing.
+- **Primary Areas:** Dark Text on Off-White backgrounds.
+- **Subtle Segregation:** If separating sections, do not use harsh lines; use a `border-t border-gray-100` or a very soft linear gradient background (`bg-gradient-to-b from-transparent to-gray-50/50`). 
 
-### 11.4 Empty States
+### 11.4 Minimalist Empty States
 
-- **Visuals:** Never display a blank white screen. Use soft, friendly, medical-adjacent illustrations (e.g., a tidy dental chair).
-- **Copy:** Use encouraging, human copy (e.g., "Belum ada pasien hari ini. Waktunya istirahat sejenak!").
-- **Recovery:** Always provide a clear secondary CTA (e.g., "+ Tambah Pasien Manual").
+- **Visuals:** A single `lucide-icon` faded to `text-gray-300` in the center of a large padded box.
+- **Copy:** 15px body copy, `tracking-wide`, `text-zinc-500`. Simple, unopinionated, direct.
 
 ## 12. Responsive Design & Accessibility
 
