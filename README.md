@@ -32,6 +32,18 @@ Silakan fork repo ini, buat branch sesuai fitur/bug, lakukan perubahan, lalu aju
 - TypeScript
 - Tailwind CSS
 
+## Cara Menjalankan
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Jalankan development server:
+```bash
+npm run dev
+```
+
 ---
 
 (README ini adalah draft awal. Mohon lengkapi detail teknis atau arsitektur seiring perkembangan project.)
