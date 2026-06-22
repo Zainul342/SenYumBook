@@ -1,306 +1,654 @@
 "use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { CheckCircle2, ChevronRight, Calendar, MessageCircle, BarChart3, Smartphone, Zap, Clock } from 'lucide-react';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import Image from "next/image";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+    ArrowUpRight,
+    CalendarDays,
+    CheckCircle2,
+    ChevronRight,
+    Clock3,
+    Mail,
+    MessageCircle,
+    ShieldCheck,
+    Sparkles,
+    Stethoscope,
+} from "lucide-react";
 
-// Helper for tailwind class merging
-function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
+const proofCards = [
+    {
+        title: "Reservasi lebih cepat dipahami pasien",
+        body: "Link booking bisa langsung dipakai tanpa edukasi panjang. Pasien pilih jadwal, admin tidak perlu chat bolak-balik.",
+    },
+    {
+        title: "Reminder otomatis yang konsisten",
+        body: "Konfirmasi, H-24, dan H-1 berjalan otomatis agar no-show turun tanpa menambah beban tim front desk.",
+    },
+    {
+        title: "Presentasi produk terlihat matang",
+        body: "Visual produk ditampilkan seperti software siap pakai, bukan konsep abstrak yang membuat calon user ragu.",
+    },
+];
+
+const featureCards = [
+    {
+        title: "Booking Link",
+        body: "Taruh di Instagram, WhatsApp Business, dan Google Maps. Satu link untuk semua kanal akuisisi pasien.",
+        metric: "Live < 5 menit",
+    },
+    {
+        title: "WhatsApp Reminder",
+        body: "Trigger otomatis saat booking dibuat. Tidak ada lagi follow-up manual yang terlupa ketika jam operasional sibuk.",
+        metric: "H-24 + H-1 otomatis",
+    },
+    {
+        title: "Jadwal Operasional",
+        body: "Dashboard menampilkan konteks harian secara cepat dari desktop maupun HP supaya keputusan operasional lebih sigap.",
+        metric: "Mobile-ready",
+    },
+    {
+        title: "Brand Presence",
+        body: "Tampilan klinik lebih profesional sejak pertama kali pasien lihat halaman booking dan reminder yang dikirim.",
+        metric: "First impression kuat",
+    },
+];
+
+const timelineSteps = [
+    {
+        label: "01",
+        title: "Pasang link booking",
+        body: "Aktifkan link booking di channel yang sudah dipakai klinik sekarang.",
+    },
+    {
+        label: "02",
+        title: "Pasien pilih jadwal",
+        body: "Pasien booking langsung tanpa percakapan administratif panjang.",
+    },
+    {
+        label: "03",
+        title: "Reminder berjalan",
+        body: "Sistem kirim pengingat WhatsApp otomatis sampai hari kunjungan.",
+    },
+    {
+        label: "04",
+        title: "Admin fokus pelayanan",
+        body: "Tim front desk fokus ke operasional klinik, bukan follow-up manual.",
+    },
+];
+
+const faqItems = [
+    {
+        question: "Apakah pasien harus install aplikasi?",
+        answer: "Tidak. Pasien cukup buka link booking lewat browser HP lalu pilih jadwal yang tersedia.",
+    },
+    {
+        question: "Cocok untuk klinik kecil atau praktik mandiri?",
+        answer: "Ya. Posisi produk ini memang untuk klinik gigi kecil yang ingin alur reservasi rapi tanpa software operasional berat.",
+    },
+    {
+        question: "Apakah form lead butuh backend khusus dulu?",
+        answer: "Untuk MVP tidak wajib. Data lead bisa langsung diteruskan ke WhatsApp atau email untuk validasi demand lebih cepat.",
+    },
+];
+
+const kpiItems = [
+    { label: "Setup", value: "< 5 menit" },
+    { label: "Flow Booking", value: "< 1 menit" },
+    { label: "Reminder", value: "Otomatis" },
+];
+
+function normalizeWhatsAppNumber(rawValue?: string) {
+    const digits = rawValue?.replace(/\D/g, "") ?? "";
+
+    if (!digits) {
+        return "";
+    }
+
+    if (digits.startsWith("62")) {
+        return digits;
+    }
+
+    if (digits.startsWith("0")) {
+        return `62${digits.slice(1)}`;
+    }
+
+    return digits;
 }
 
-// ---------------------------------------------------------
-// REUSABLE UI PRIMITIVES (Boutique SaaS Style)
-// ---------------------------------------------------------
+const whatsappNumber = normalizeWhatsAppNumber(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER);
+const leadEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL ?? "";
 
-const FadeIn = ({ children, delay = 0, className }: { children: React.ReactNode; delay?: number; className?: string }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.5, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
-        className={className}
-    >
-        {children}
-    </motion.div>
-);
+function buildMailtoHref(subject: string, body: string) {
+    if (!leadEmail) {
+        return "#lead-form";
+    }
 
-const PillBadge = ({ children, color = "primary" }: { children: React.ReactNode, color?: "primary" | "secondary" }) => (
-    <span className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-widest",
-        color === "primary" ? "bg-blue-50 text-blue-600 border border-blue-100" : "bg-green-50 text-green-600 border border-green-100"
-    )}>
-        {children}
-    </span>
-);
+    return `mailto:${leadEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
-// ---------------------------------------------------------
-// SECTIONS
-// ---------------------------------------------------------
+function buildWhatsAppHref(message: string) {
+    if (!whatsappNumber) {
+        return "#lead-form";
+    }
 
-const Navbar = () => (
-    <nav className="fixed top-0 inset-x-0 z-50 bg-white/70 backdrop-blur-xl border-b border-black/[0.03]">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-md bg-zinc-900 flex items-center justify-center">
-                    <span className="text-white font-bold text-xs tracking-tighter">S</span>
-                </div>
-                <span className="font-bold text-zinc-900 tracking-tight">SenYumBook</span>
-            </div>
-            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-500">
-                <a href="#fitur" className="hover:text-zinc-900 transition-colors">Fitur</a>
-                <a href="#harga" className="hover:text-zinc-900 transition-colors">Harga</a>
-                <a href="#faq" className="hover:text-zinc-900 transition-colors">FAQ</a>
-            </div>
-            <div>
-                <button className="bbtn-primary text-sm px-4 py-2">
-                    Coba Gratis <ChevronRight className="w-4 h-4" />
-                </button>
-            </div>
-        </div>
-    </nav>
-);
+    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+}
 
-// CSS Product Mockup: WhatsApp Notification
-const FakeWhatsAppNotif = () => (
-    <motion.div
-        initial={{ x: 20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ delay: 0.8, type: "spring", stiffness: 200, damping: 20 }}
-        className="absolute -right-8 -bottom-8 md:right-0 md:top-32 w-72 bg-white rounded-2xl p-4 shadow-float border border-black/[0.04] z-10"
-    >
-        <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                <MessageCircle className="w-4 h-4" />
-            </div>
-            <div>
-                <div className="text-xs font-semibold text-zinc-900">SenYumBook Bot</div>
-                <div className="text-[10px] text-zinc-400">Baru saja</div>
-            </div>
-        </div>
-        <div className="text-xs text-zinc-600 leading-relaxed bg-zinc-50 p-3 rounded-xl border border-black/[0.02]">
-            "Halo Budi! Mengingatkan jadwal periksa gigi Anda esok hari pkl 10:00 dengan dr. Salma."
-        </div>
-    </motion.div>
-);
+function buildLeadMessage(name: string, clinic: string, phone: string) {
+    return [
+        "Halo SenYumBook, saya tertarik mencoba produknya.",
+        `Nama: ${name || "-"}`,
+        `Klinik: ${clinic || "-"}`,
+        `WhatsApp: ${phone || "-"}`,
+        "Mohon info demo atau trial yang tersedia.",
+    ].join("\n");
+}
 
-// CSS Product Mockup: Simple Dashboard
-const FakeDashboard = () => (
-    <div className="relative w-full aspect-[4/3] max-w-lg mx-auto bg-white rounded-3xl border border-black/[0.04] shadow-bento overflow-hidden flex flex-col">
-        {/* Mac OS dot header */}
-        <div className="h-10 border-b border-black/[0.02] bg-zinc-50/50 flex items-center px-4 gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-            <div className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
-            <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
-        </div>
-        {/* Body */}
-        <div className="p-6 flex-1 bg-gradient-to-br from-zinc-50/50 to-white">
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <h3 className="font-semibold text-zinc-900">Jadwal Hari Ini</h3>
-                    <p className="text-xs text-zinc-400">12 Pasien Terjadwal</p>
-                </div>
-                <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium border border-blue-100">
-                    Otomatis Berjalan
-                </div>
-            </div>
+function buildLeadEmailBody(name: string, clinic: string, phone: string) {
+    return [
+        "Halo SenYumBook,",
+        "",
+        "Saya tertarik mencoba produk SenYumBook.",
+        "",
+        `Nama: ${name || "-"}`,
+        `Klinik: ${clinic || "-"}`,
+        `WhatsApp: ${phone || "-"}`,
+        "",
+        "Mohon info demo atau trial yang tersedia.",
+    ].join("\n");
+}
 
-            <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white border border-black/[0.02] shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                            <div>
-                                <div className="text-sm font-medium text-zinc-800">Pasien {i}</div>
-                                <div className="text-xs text-zinc-400">Konsultasi Cabut Gigi</div>
-                            </div>
-                        </div>
-                        <div className="text-xs font-medium text-zinc-500">10:00</div>
+function Reveal({
+    children,
+    delay = 0,
+    className,
+}: {
+    children: React.ReactNode;
+    delay?: number;
+    className?: string;
+}) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 24, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: "-64px" }}
+            transition={{ duration: 0.56, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    );
+}
+
+function LeadButton({
+    href,
+    enabled,
+    children,
+    tone,
+}: {
+    href: string;
+    enabled: boolean;
+    children: React.ReactNode;
+    tone: "dark" | "light";
+}) {
+    const className = tone === "dark" ? "action-btn action-btn-dark" : "action-btn action-btn-light";
+
+    if (!enabled) {
+        return (
+            <span className={`${className} cursor-not-allowed opacity-55`} aria-disabled="true">
+                {children}
+            </span>
+        );
+    }
+
+    return (
+        <a href={href} className={className}>
+            {children}
+        </a>
+    );
+}
+
+function SectionTag({ children, tone = "light" }: { children: React.ReactNode; tone?: "light" | "dark" }) {
+    const className = tone === "light" ? "section-tag" : "section-tag section-tag-dark";
+
+    return <span className={className}>{children}</span>;
+}
+
+function Navbar() {
+    return (
+        <nav className="site-nav">
+            <div className="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-6">
+                <a href="#top" className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-sm font-semibold text-white">
+                        S
                     </div>
+                    <div>
+                        <p className="text-sm font-semibold tracking-tight text-slate-950">SenYumBook</p>
+                        <p className="text-[11px] uppercase tracking-[0.22em] text-slate-400">Reservation-first</p>
+                    </div>
+                </a>
+
+                <div className="hidden items-center gap-8 text-sm font-medium text-slate-500 md:flex">
+                    <a href="#fitur" className="transition-colors hover:text-slate-950">
+                        Fitur
+                    </a>
+                    <a href="#produk" className="transition-colors hover:text-slate-950">
+                        Produk
+                    </a>
+                    <a href="#faq" className="transition-colors hover:text-slate-950">
+                        FAQ
+                    </a>
+                </div>
+
+                <a href="#lead-form" className="action-btn action-btn-dark text-sm">
+                    Minta Demo
+                    <ChevronRight className="h-4 w-4" />
+                </a>
+            </div>
+        </nav>
+    );
+}
+
+function HeroSection() {
+    const heroMessage = buildLeadMessage("", "Klinik saya", "");
+    const heroEmail = buildMailtoHref("Demo SenYumBook", buildLeadEmailBody("", "Klinik saya", ""));
+
+    return (
+        <section id="top" className="hero-shell px-6 pb-16 pt-24 md:pb-20 md:pt-28">
+            <div className="hero-grid-layer" />
+            <div className="hero-glow hero-glow-left" />
+            <div className="hero-glow hero-glow-right" />
+
+            <div className="mx-auto max-w-7xl">
+                <div className="grid gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-start lg:gap-12">
+                    <Reveal className="relative z-10 max-w-[34rem] pt-6 lg:pt-10">
+                        <SectionTag>Tech executive landing page</SectionTag>
+                        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.22em] text-slate-400">Untuk klinik gigi kecil di Indonesia</p>
+
+                        <h1 className="display-title mt-4 text-[clamp(2.4rem,4.4vw,4.3rem)] text-slate-950">
+                            Booking rapi,
+                            <br />
+                            reminder otomatis,
+                            <br />
+                            operasional lebih tenang.
+                        </h1>
+
+                        <p className="mt-6 max-w-lg text-base leading-8 text-slate-600 md:text-lg">
+                            SenYumBook membantu klinik menangani reservasi dengan alur yang jelas. Pasien cepat paham, admin lebih fokus, dan follow-up berjalan konsisten.
+                        </p>
+
+                        <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+                            <LeadButton href={buildWhatsAppHref(heroMessage)} enabled={Boolean(whatsappNumber)} tone="dark">
+                                WhatsApp Demo
+                                <MessageCircle className="h-4 w-4" />
+                            </LeadButton>
+                            <LeadButton href={heroEmail} enabled={Boolean(leadEmail)} tone="light">
+                                Email Proposal
+                                <Mail className="h-4 w-4" />
+                            </LeadButton>
+                        </div>
+
+                        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+                            {kpiItems.map((item) => (
+                                <div key={item.label} className="metric-card">
+                                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{item.label}</p>
+                                    <p className="mt-2 text-[1.45rem] font-semibold tracking-tight text-slate-950">{item.value}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </Reveal>
+
+                    <Reveal delay={0.08} className="relative lg:pt-2">
+                        <motion.div
+                            animate={{ y: [0, -8, 0] }}
+                            transition={{ duration: 6.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                            className="product-frame"
+                        >
+                            <div className="frame-toolbar" />
+                            <div className="overflow-hidden rounded-[1.4rem] border border-slate-200/80 bg-white">
+                                <Image
+                                    src="/hero-dashboard.png"
+                                    alt="Dashboard SenYumBook menampilkan jadwal mingguan dan status booking pasien."
+                                    width={640}
+                                    height={640}
+                                    priority
+                                    className="h-auto w-full"
+                                />
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, x: 16 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.22, duration: 0.5 }}
+                            className="floating-note right-4 top-3 hidden lg:block"
+                        >
+                            <span className="note-dot bg-emerald-500" />
+                            <p className="text-sm font-semibold text-slate-950">Reminder Terkirim</p>
+                            <p className="text-xs text-slate-500">WhatsApp H-1 tanpa follow-up manual</p>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, x: -18 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.28, duration: 0.5 }}
+                            className="floating-card left-2 bottom-6 hidden xl:block"
+                        >
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">Booking flow</p>
+                            <div className="mt-3 overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50">
+                                <Image
+                                    src="/booking-flow-card.svg"
+                                    alt="Ringkasan alur booking pasien SenYumBook."
+                                    width={360}
+                                    height={280}
+                                    className="h-auto w-full"
+                                />
+                            </div>
+                        </motion.div>
+                    </Reveal>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function TrustSection() {
+    return (
+        <section className="px-6 py-8 md:py-10">
+            <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-3">
+                {proofCards.map((item, index) => (
+                    <Reveal key={item.title} delay={index * 0.06}>
+                        <motion.article whileHover={{ y: -6 }} transition={{ duration: 0.22 }} className="executive-card p-6">
+                            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+                                {index === 0 && <Sparkles className="h-5 w-5" />}
+                                {index === 1 && <Stethoscope className="h-5 w-5" />}
+                                {index === 2 && <CheckCircle2 className="h-5 w-5" />}
+                            </div>
+                            <h3 className="mt-5 text-[1.38rem] font-semibold tracking-tight text-slate-950">{item.title}</h3>
+                            <p className="mt-3 text-sm leading-7 text-slate-600">{item.body}</p>
+                        </motion.article>
+                    </Reveal>
                 ))}
             </div>
-        </div>
-    </div>
-);
+        </section>
+    );
+}
 
-const Hero = () => (
-    <section className="pt-32 pb-20 px-6 overflow-hidden bg-grid-pattern relative">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-            <FadeIn>
-                <PillBadge>Didesain untuk Klinik Gigi</PillBadge>
-                <h1 className="text-5xl md:text-6xl tracking-tighter mt-6 mb-6">
-                    Reservasi otomatis. <br />
-                    <span className="text-zinc-400">Tanpa ribet chat WA.</span>
-                </h1>
-                <p className="text-lg text-zinc-500 mb-8 max-w-md leading-relaxed">
-                    Link booking publik yang elegan, dashboard harian super simpel, dan pengingat WhatsApp otomatis untuk menekan pasien no-show hingga 70%.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                    <button className="bbtn-primary">
-                        Coba Gratis 14 Hari
-                    </button>
-                    <button className="bbtn-secondary">
-                        Lihat Demo
-                    </button>
+function FeatureSection() {
+    return (
+        <section id="fitur" className="px-6 py-20 md:py-24">
+            <div className="mx-auto max-w-7xl">
+                <Reveal className="mx-auto max-w-3xl text-center">
+                    <SectionTag>Core capabilities</SectionTag>
+                    <h2 className="display-title mt-5 text-[clamp(2rem,3.8vw,3.4rem)] text-slate-950">Fitur inti yang relevan untuk validasi MVP klinik.</h2>
+                    <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">
+                        Struktur halaman dibuat cepat dipahami. Fokus pada alur reservasi, reminder, dan presentasi produk yang terlihat serius.
+                    </p>
+                </Reveal>
+
+                <div className="mt-14 grid gap-5 lg:grid-cols-2">
+                    {featureCards.map((item, index) => (
+                        <Reveal key={item.title} delay={index * 0.06}>
+                            <motion.article whileHover={{ y: -5 }} transition={{ duration: 0.22 }} className="executive-card h-full p-7">
+                                <div className="flex items-center justify-between gap-4">
+                                    <p className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-400">0{index + 1}</p>
+                                    <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
+                                        {item.metric}
+                                    </span>
+                                </div>
+                                <h3 className="mt-6 text-[1.56rem] font-semibold tracking-tight text-slate-950">{item.title}</h3>
+                                <p className="mt-3 text-sm leading-7 text-slate-600">{item.body}</p>
+                            </motion.article>
+                        </Reveal>
+                    ))}
                 </div>
-            </FadeIn>
 
-            <FadeIn delay={0.2} className="relative">
-                <FakeDashboard />
-                <FakeWhatsAppNotif />
-                {/* Glow behind */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl -z-10" />
-            </FadeIn>
-        </div>
-    </section>
-);
-
-const BentoFeatures = () => (
-    <section id="fitur" className="py-24 px-6 bg-white border-t border-black/[0.02]">
-        <div className="max-w-5xl mx-auto">
-            <FadeIn className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl tracking-tighter mb-4">Sistem Cerdas, Tampilan Sesederhana Mungkin</h2>
-                <p className="text-zinc-500 max-w-xl mx-auto">Kami membuang fitur kalender yang rumit dan hanya menyisakan apa yang benar-benar dibutuhkan oleh klinik gigi Anda.</p>
-            </FadeIn>
-
-            <div className="grid md:grid-cols-3 gap-6 auto-rows-[250px]">
-
-                {/* Main Feature: spans 2 cols, 2 rows */}
-                <FadeIn delay={0.1} className="bento-card md:col-span-2 md:row-span-2 flex flex-col">
-                    <div className="mb-4">
-                        <Zap className="w-6 h-6 text-zinc-900 mb-2" />
-                        <h3 className="text-xl font-bold tracking-tight mb-2">Automasi WhatsApp Tanpa Ampun</h3>
-                        <p className="text-zinc-500 text-sm">Setiap pasien yang booking langsung menerima konfirmasi, H-1 pengingat, dan H-1 jam pengingat tanpa admin Anda menekan satu tombol pun.</p>
-                    </div>
-                    <div className="flex-1 mt-6 rounded-xl bg-zinc-50 border border-black/[0.02] p-6 relative overflow-hidden flex items-center justify-center">
-                        {/* Abstract WA bubble representation */}
-                        <div className="space-y-3 w-full max-w-xs">
-                            <div className="h-10 bg-green-100/50 rounded-2xl rounded-tl-sm w-3/4 animate-pulse relative">
-                                <div className="absolute right-2 bottom-2 w-2 h-2 bg-green-500 rounded-full" />
+                <div className="mt-10 grid gap-4 rounded-[1.9rem] border border-slate-200/80 bg-slate-50/80 p-6 md:grid-cols-2 xl:grid-cols-4">
+                    {timelineSteps.map((step, index) => (
+                        <Reveal key={step.title} delay={index * 0.05}>
+                            <div className="rounded-2xl border border-slate-200/75 bg-white px-4 py-5">
+                                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{step.label}</p>
+                                <p className="mt-3 text-lg font-semibold tracking-tight text-slate-950">{step.title}</p>
+                                <p className="mt-2 text-sm leading-7 text-slate-600">{step.body}</p>
                             </div>
-                            <div className="h-16 bg-blue-50/50 rounded-2xl rounded-tr-sm w-full ml-auto animate-pulse [animation-delay:500ms]" />
+                        </Reveal>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function ProductSection() {
+    return (
+        <section id="produk" className="px-6 py-20 md:py-24">
+            <div className="mx-auto max-w-7xl rounded-[2rem] border border-slate-200/85 bg-white/92 p-6 shadow-[0_32px_90px_-52px_rgba(15,23,42,0.35)] backdrop-blur-xl md:p-8">
+                <div className="grid gap-10 lg:grid-cols-[0.83fr_1.17fr]">
+                    <Reveal className="max-w-xl">
+                        <SectionTag>Product evidence</SectionTag>
+                        <h2 className="display-title mt-5 text-[clamp(2rem,3.8vw,3.3rem)] text-slate-950">Tampilan produk langsung membangun kepercayaan.</h2>
+                        <p className="mt-5 text-base leading-8 text-slate-600 md:text-lg">
+                            Di section ini, calon pengguna melihat konteks nyata: jadwal mingguan, flow booking, dan kanal konversi yang benar-benar aktif.
+                        </p>
+
+                        <div className="mt-8 space-y-4">
+                            {[
+                                "Informasi utama terbaca dalam hitungan detik.",
+                                "Visual produk terasa siap dipakai, bukan konsep.",
+                                "CTA WA dan Email selalu terlihat tanpa friksi.",
+                            ].map((item) => (
+                                <div key={item} className="flex items-start gap-3">
+                                    <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-emerald-500" />
+                                    <p className="text-sm leading-7 text-slate-600">{item}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </Reveal>
+
+                    <Reveal delay={0.08} className="executive-card p-4 md:p-5">
+                        <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
+                            <div className="overflow-hidden rounded-[1.4rem] border border-slate-200/80 bg-white">
+                                <Image
+                                    src="/hero-dashboard.png"
+                                    alt="Dashboard SenYumBook dengan jadwal mingguan dan status kunjungan pasien."
+                                    width={640}
+                                    height={640}
+                                    className="h-auto w-full"
+                                />
+                            </div>
+
+                            <div className="grid gap-4">
+                                <div className="overflow-hidden rounded-[1.35rem] border border-slate-200/80 bg-slate-50">
+                                    <Image
+                                        src="/booking-flow-card.svg"
+                                        alt="Visual alur booking pasien SenYumBook."
+                                        width={360}
+                                        height={280}
+                                        className="h-auto w-full"
+                                    />
+                                </div>
+
+                                <div className="rounded-[1.35rem] border border-blue-100 bg-blue-50/85 p-5">
+                                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-700">Live contact channels</p>
+                                    <p className="mt-3 text-xl font-semibold tracking-tight text-slate-950">Konversi langsung ke kanal follow-up riil.</p>
+                                    <p className="mt-3 text-sm leading-7 text-slate-600">
+                                        Tombol WhatsApp dan email sudah siap dipakai untuk demo, trial, atau diskusi pricing.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </Reveal>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function FaqSection() {
+    return (
+        <section id="faq" className="px-6 py-20 md:py-24">
+            <div className="mx-auto max-w-7xl">
+                <Reveal className="mx-auto max-w-3xl text-center">
+                    <SectionTag>Frequently asked</SectionTag>
+                    <h2 className="display-title mt-5 text-[clamp(2rem,3.6vw,3.15rem)] text-slate-950">Pertanyaan sebelum klinik memutuskan demo.</h2>
+                </Reveal>
+
+                <div className="mx-auto mt-12 max-w-4xl space-y-4">
+                    {faqItems.map((faq, index) => (
+                        <Reveal key={faq.question} delay={index * 0.06}>
+                            <details className="faq-item group" open={index === 0}>
+                                <summary className="flex items-center justify-between gap-4">
+                                    <span className="text-base font-semibold tracking-tight text-slate-950 md:text-lg">{faq.question}</span>
+                                    <span className="faq-pill">Buka</span>
+                                </summary>
+                                <p className="pt-4 text-sm leading-7 text-slate-600">{faq.answer}</p>
+                            </details>
+                        </Reveal>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function LeadSection() {
+    const [name, setName] = useState("");
+    const [clinic, setClinic] = useState("");
+    const [phone, setPhone] = useState("");
+
+    const leadMessage = buildLeadMessage(name, clinic, phone);
+    const emailBody = buildLeadEmailBody(name, clinic, phone);
+
+    return (
+        <section id="lead-form" className="px-6 py-20 md:py-24">
+            <Reveal className="mx-auto max-w-7xl rounded-[2rem] border border-slate-800/80 bg-slate-950 px-8 py-12 text-white shadow-[0_42px_120px_-56px_rgba(2,8,20,0.9)] md:px-12 lg:px-14">
+                <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr]">
+                    <div className="max-w-xl">
+                        <SectionTag tone="dark">Lead capture</SectionTag>
+                        <h2 className="display-title mt-5 text-[clamp(2rem,3.8vw,3.25rem)] text-white">Kirim lead ke WhatsApp dan email tanpa integrasi kompleks.</h2>
+                        <p className="mt-5 text-base leading-8 text-slate-300 md:text-lg">
+                            Untuk fase MVP, funnel cukup diarahkan ke channel follow-up yang sudah dipakai tim Anda setiap hari.
+                        </p>
+
+                        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                            <LeadButton href={buildWhatsAppHref(leadMessage)} enabled={Boolean(whatsappNumber)} tone="light">
+                                Kirim ke WhatsApp
+                                <MessageCircle className="h-4 w-4" />
+                            </LeadButton>
+                            <LeadButton
+                                href={buildMailtoHref("Lead Baru SenYumBook", emailBody)}
+                                enabled={Boolean(leadEmail)}
+                                tone="light"
+                            >
+                                Kirim ke Email
+                                <Mail className="h-4 w-4" />
+                            </LeadButton>
+                        </div>
+
+                        <div className="mt-6 space-y-2 text-sm text-slate-400">
+                            <p>WhatsApp: {whatsappNumber ? `aktif ke ${whatsappNumber}` : "belum dikonfigurasi"}</p>
+                            <p>Email: {leadEmail || "belum dikonfigurasi"}</p>
                         </div>
                     </div>
-                </FadeIn>
 
-                {/* Short Feature 1 */}
-                <FadeIn delay={0.2} className="bento-card flex flex-col justify-between group">
-                    <div>
-                        <Smartphone className="w-5 h-5 text-zinc-400 mb-2 group-hover:text-zinc-900 transition-colors" />
-                        <h3 className="font-semibold tracking-tight text-zinc-900 mb-1">Booking Link Publik</h3>
-                        <p className="text-xs text-zinc-500">Taruh di bio IG. Pasien booking dalam 35 detik.</p>
+                    <div className="rounded-[1.6rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+                        <div className="grid gap-4">
+                            <label className="grid gap-2 text-sm text-slate-300">
+                                Nama
+                                <input
+                                    className="lead-input"
+                                    placeholder="dr. Salma"
+                                    value={name}
+                                    onChange={(event) => setName(event.target.value)}
+                                />
+                            </label>
+
+                            <label className="grid gap-2 text-sm text-slate-300">
+                                Nama klinik
+                                <input
+                                    className="lead-input"
+                                    placeholder="Klinik Senyum Sehat"
+                                    value={clinic}
+                                    onChange={(event) => setClinic(event.target.value)}
+                                />
+                            </label>
+
+                            <label className="grid gap-2 text-sm text-slate-300">
+                                Nomor WhatsApp
+                                <input
+                                    className="lead-input"
+                                    placeholder="08xxxxxxxxxx"
+                                    value={phone}
+                                    onChange={(event) => setPhone(event.target.value)}
+                                />
+                            </label>
+                        </div>
                     </div>
-                    <div className="h-20 w-full mt-4 bg-gradient-to-t from-zinc-50 to-transparent border-t border-black/[0.02] rounded-b-xl" />
-                </FadeIn>
-
-                {/* Short Feature 2 */}
-                <FadeIn delay={0.3} className="bento-card flex flex-col justify-between group">
-                    <div>
-                        <Calendar className="w-5 h-5 text-zinc-400 mb-2 group-hover:text-zinc-900 transition-colors" />
-                        <h3 className="font-semibold tracking-tight text-zinc-900 mb-1">Mobile Admin List</h3>
-                        <p className="text-xs text-zinc-500">Mbak klinik cukup swipe kanan/kiri untuk validasi kehadiran pasien harian.</p>
-                    </div>
-                </FadeIn>
-
-                {/* Wide Feature (bottom row, 2 cols if we want, or just let it flow) */}
-                <FadeIn delay={0.4} className="bento-card md:col-span-3 flex sm:flex-row flex-col gap-6 items-center">
-                    <div className="flex-1">
-                        <PillBadge color="secondary">Keamanan Data</PillBadge>
-                        <h3 className="text-lg font-bold tracking-tight mt-3 mb-2">Sesuai Standar UU PDP Indonesia</h3>
-                        <p className="text-sm text-zinc-500">Data rekam medis ringan dan nomor telepon pasien dienkripsi penuh. Dokter tidur tenang, data pasien aman.</p>
-                    </div>
-                    <div className="w-full sm:w-64 h-24 rounded-xl bg-zinc-950 flex flex-col justify-center items-center text-zinc-500 font-mono text-xs">
-                        <div className="flex gap-2 opacity-50"><CheckCircle2 className="w-4 h-4 text-green-400" /> end-to-end encryption</div>
-                        <div className="flex gap-2 opacity-50 mt-2"><CheckCircle2 className="w-4 h-4 text-green-400" /> secure payload</div>
-                    </div>
-                </FadeIn>
-
-            </div>
-        </div>
-    </section>
-);
-
-const Pricing = () => (
-    <section id="harga" className="py-24 px-6">
-        <div className="max-w-4xl mx-auto">
-            <FadeIn className="text-center mb-16">
-                <h2 className="text-3xl tracking-tighter mb-4">Harga Simpel. Tanpa Biaya Tersembunyi.</h2>
-                <p className="text-zinc-500">Mulai gratis, upgrade saat klinik Anda semakin sibuk.</p>
-            </FadeIn>
-
-            <div className="grid md:grid-cols-2 gap-6">
-                {/* Tier 1 */}
-                <FadeIn delay={0.1} className="bento-card flex flex-col">
-                    <h3 className="font-bold text-xl tracking-tight mb-2">Starter</h3>
-                    <div className="flex items-baseline gap-1 mb-6">
-                        <span className="text-3xl font-extrabold tracking-tighter">Rp 0</span>
-                        <span className="text-zinc-400 text-sm">/bulan</span>
-                    </div>
-                    <p className="text-sm text-zinc-500 mb-8 border-b border-black/[0.04] pb-6">Sempurna untuk dokter praktik mandiri yang baru merintis.</p>
-
-                    <ul className="space-y-4 flex-1 mb-8">
-                        {["Booking Link Basic", "Hingga 50 Reservasi/Bulan", "Dashboard Admin Mobile", "Notifikasi Email"].map((feat, i) => (
-                            <li key={i} className="flex items-start gap-3">
-                                <CheckCircle2 className="w-4 h-4 text-zinc-300 mt-0.5" />
-                                <span className="text-sm text-zinc-600">{feat}</span>
-                            </li>
-                        ))}
-                    </ul>
-                    <button className="bbtn-secondary w-full">Mulai Gratis</button>
-                </FadeIn>
-
-                {/* Tier 2 */}
-                <FadeIn delay={0.2} className="bento-card border-zinc-900 shadow-xl flex flex-col relative">
-                    <div className="absolute top-0 inset-x-0 h-1 bg-zinc-900" />
-                    <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-xl tracking-tight text-zinc-900">Pro Clinic</h3>
-                        <PillBadge color="secondary">Paling Laris</PillBadge>
-                    </div>
-                    <div className="flex items-baseline gap-1 mb-6">
-                        <span className="text-3xl font-extrabold tracking-tighter text-zinc-900">Rp 299k</span>
-                        <span className="text-zinc-400 text-sm">/bulan</span>
-                    </div>
-                    <p className="text-sm text-zinc-500 mb-8 border-b border-black/[0.04] pb-6">Automasi penuh untuk mengurangi pasien batal hadir drastis.</p>
-
-                    <ul className="space-y-4 flex-1 mb-8">
-                        {["Semua di Starter", "Reservasi Tanpa Batas", "Automasi WhatsApp Penuh", "Laporan Kehadiran", "Dukungan Prioritas"].map((feat, i) => (
-                            <li key={i} className="flex items-start gap-3">
-                                <CheckCircle2 className="w-4 h-4 text-zinc-900 mt-0.5" />
-                                <span className="text-sm text-zinc-700 font-medium">{feat}</span>
-                            </li>
-                        ))}
-                    </ul>
-                    <button className="bbtn-primary w-full">Coba Gratis 14 Hari</button>
-                </FadeIn>
-            </div>
-        </div>
-    </section>
-);
-
-const Footer = () => (
-    <footer className="border-t border-black/[0.04] py-12 px-6 bg-zinc-50">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md bg-zinc-300 flex items-center justify-center">
-                    <span className="text-white font-bold text-[10px]">S</span>
                 </div>
-                <span className="font-bold text-zinc-800 text-sm">SenYumBook</span>
+            </Reveal>
+        </section>
+    );
+}
+
+function Footer() {
+    return (
+        <footer className="border-t border-slate-200/70 px-6 py-10">
+            <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <p className="text-sm font-semibold tracking-tight text-slate-950">SenYumBook</p>
+                    <p className="mt-1 text-sm text-slate-500">Landing page MVP untuk reservation-first SaaS klinik gigi kecil di Indonesia.</p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-5 text-sm text-slate-500">
+                    <span className="inline-flex items-center gap-2">
+                        <Clock3 className="h-4 w-4" />
+                        Setup cepat
+                    </span>
+                    <span className="inline-flex items-center gap-2">
+                        <CalendarDays className="h-4 w-4" />
+                        Booking-first
+                    </span>
+                    <span className="inline-flex items-center gap-2">
+                        <ShieldCheck className="h-4 w-4" />
+                        CTA live
+                    </span>
+                </div>
             </div>
-            <p className="text-xs text-zinc-400">© 2026 SenYumBook. Didesain untuk Klinik Gigi Indonesia.</p>
-        </div>
-    </footer>
-);
+        </footer>
+    );
+}
+
+function StickyAssist() {
+    const floatingMessage = buildLeadMessage("", "Klinik saya", "");
+
+    return (
+        <motion.a
+            href={buildWhatsAppHref(floatingMessage)}
+            whileHover={{ y: -4, scale: 1.01 }}
+            className="fixed bottom-5 right-5 z-50 hidden items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-lg lg:inline-flex"
+        >
+            <MessageCircle className="h-4 w-4" />
+            Chat cepat
+            <ArrowUpRight className="h-4 w-4" />
+        </motion.a>
+    );
+}
 
 export default function LandingPage() {
     return (
-        <main className="min-h-screen bg-background">
+        <main className="app-shell min-h-screen">
             <Navbar />
-            <Hero />
-            <BentoFeatures />
-            <Pricing />
+            <HeroSection />
+            <TrustSection />
+            <FeatureSection />
+            <ProductSection />
+            <FaqSection />
+            <LeadSection />
             <Footer />
+            <StickyAssist />
         </main>
     );
 }
