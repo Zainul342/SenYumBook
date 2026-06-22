@@ -27,9 +27,10 @@ Mempermudah proses pencatatan, pelacakan, dan manajemen perpustakaan pribadi ata
 Silakan fork repo ini, buat branch sesuai fitur/bug, lakukan perubahan, lalu ajukan pull request.
 
 ## Teknologi
+- Next.js (App Router)
+- React
 - TypeScript
-- (React Native/React JS/Next JS, sesuai stack yang akan digunakan)
-- [Tambahkan sesuai kebutuhan]
+- Tailwind CSS
 
 ---
 
